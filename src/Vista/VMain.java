@@ -7,6 +7,13 @@ package Vista;
 
 import Controlador.Ctrl_BD;
 import static java.lang.System.exit;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -16,7 +23,8 @@ import javax.swing.table.DefaultTableModel;
 public class VMain extends javax.swing.JFrame {
     public static Ctrl_BD controladorBD = new Ctrl_BD();
     DefaultTableModel model;
-    public static boolean bConexionDialog;
+    
+    DatabaseMetaData metaDatos;
     
     
     /**
@@ -25,17 +33,17 @@ public class VMain extends javax.swing.JFrame {
     public VMain() {
         initComponents();
         this.setVisible(false);
-        bConexionDialog = false;
         VConexion conexion = new VConexion(this, true);
         conexion.setVisible(true);
-        if(bConexionDialog){
-            this.setVisible(true);
-        }else{
-            exit(0);
-        }
         model = (DefaultTableModel) tResultado.getModel();
         model.setColumnCount(0);
         model.setRowCount(0);
+        try {
+            metaDatos = controladorBD.conexion.getMetaData();
+        } catch (SQLException ex) {
+            Logger.getLogger(VMain.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        cargarTablas();
     }
 
     /**
@@ -74,11 +82,21 @@ public class VMain extends javax.swing.JFrame {
         jLabel1.setText("Tablas:");
 
         cbTablas.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        cbTablas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbTablasActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("Columnas: ");
 
         cbColumnas.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         cbColumnas.setEnabled(false);
+        cbColumnas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbColumnasActionPerformed(evt);
+            }
+        });
 
         jLabel3.setText("Operador:");
 
@@ -199,6 +217,71 @@ public class VMain extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void cbTablasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbTablasActionPerformed
+        cbColumnas.removeAllItems();
+        cbColumnas.setEnabled(true);
+        ArrayList<String> listaColumnas = controladorBD.devolverColumnas(metaDatos, cbTablas.getSelectedItem().toString());
+        for(String item : listaColumnas){
+            cbColumnas.addItem(item);
+        }
+    }//GEN-LAST:event_cbTablasActionPerformed
+
+    private void cbColumnasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbColumnasActionPerformed
+        System.out.println("AQUI");
+        cbOperador.removeAllItems();
+        etValor.setText("");
+        etFecha1.setText("");
+        etFecha2.setText("");
+        int i = controladorBD.conocerTipoColumna(metaDatos, cbTablas.getSelectedItem().toString(), cbColumnas.getSelectedItem().toString());
+        switch(i){
+            case 1:
+                cbOperador.setEnabled(true);
+                etValor.setEnabled(true);
+                etFecha1.setEnabled(false);
+                etFecha2.setEnabled(false);
+                cbOperador.addItem("LIKE");
+                cbOperador.addItem("=");
+                cbOperador.addItem("<>");
+            break;
+            case 2:
+                cbOperador.setEnabled(true);
+                etValor.setEnabled(true);
+                etFecha1.setEnabled(false);
+                etFecha2.setEnabled(false);
+                cbOperador.addItem("=");
+                cbOperador.addItem("<");
+                cbOperador.addItem(">");
+                cbOperador.addItem("<=");
+                cbOperador.addItem(">=");
+                cbOperador.addItem("<>");
+            break;
+            case 3:
+                cbOperador.setEnabled(false);
+                etValor.setEnabled(false);
+                etFecha1.setEnabled(true);
+                etFecha2.setEnabled(true);
+            break;
+            case 4:
+                cbOperador.setEnabled(true);
+                etValor.setEnabled(true);
+                etFecha1.setEnabled(false);
+                etFecha2.setEnabled(false);
+                cbOperador.addItem("=");
+            break;
+            case -1:
+                JOptionPane.showMessageDialog(this, "El tipo de la columna no es valido", "Tipo no valido", JOptionPane.INFORMATION_MESSAGE);
+            break;
+        }
+    }//GEN-LAST:event_cbColumnasActionPerformed
+
+    public void cargarTablas(){
+        cbTablas.removeAllItems();
+        ArrayList<String> listaTablas = controladorBD.devolverTablas(metaDatos);
+        for (String item : listaTablas) {
+            cbTablas.addItem(item);
+        }
+    }
+    
     /**
      * @param args the command line arguments
      */

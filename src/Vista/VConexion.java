@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
  * @author PC
  */
 public class VConexion extends javax.swing.JDialog {
+
     /**
      * Creates new form vConexion
      */
@@ -61,11 +62,18 @@ public class VConexion extends javax.swing.JDialog {
 
         jLabel4.setText("Contraseña:");
 
+        etServidor.setText("localhost");
+
+        etPuerto.setText("1521");
         etPuerto.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 etPuertoKeyTyped(evt);
             }
         });
+
+        etUser.setText("AD_TEMA_03_FACTURAS");
+
+        etPass.setText("AD_TEMA_03_FACTURAS");
 
         bAceptar.setText("Aceptar");
         bAceptar.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -92,7 +100,7 @@ public class VConexion extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(bAceptar, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 103, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 113, Short.MAX_VALUE)
                         .addComponent(bCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -146,34 +154,29 @@ public class VConexion extends javax.swing.JDialog {
     }//GEN-LAST:event_etPuertoKeyTyped
 
     private void bAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bAceptarActionPerformed
-        if(etPass.getText().isEmpty()||etUser.getText().isEmpty()||etPuerto.getText().isEmpty()||etServidor.getText().isEmpty()){
-            JOptionPane.showMessageDialog(this, "Los campos no pueden estar vacíos","",JOptionPane.WARNING_MESSAGE);
-        }else{
-            if(VMain.controladorBD.conectarBD(etServidor.getText(), etPuerto.getText(), etUser.getText(), etPass.getText())){
+        if (etPass.getText().isEmpty() || etUser.getText().isEmpty() || etPuerto.getText().isEmpty() || etServidor.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Los campos no pueden estar vacíos", "", JOptionPane.WARNING_MESSAGE);
+        } else {
+            if (VMain.controladorBD.conectarBD(etServidor.getText(), etPuerto.getText(), etUser.getText(), etPass.getText())) {
                 JOptionPane.showMessageDialog(this, "Conexión establecida con éxito", "Conectado", JOptionPane.INFORMATION_MESSAGE);
-                VMain.bConexionDialog=true;
                 dispose();
-            }else{
-                cancelado();
-                dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "No se ha establecido la conexión", "Proceso cancelado", JOptionPane.WARNING_MESSAGE);
+                exit(0);
             }
         }
     }//GEN-LAST:event_bAceptarActionPerformed
 
     private void bCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bCancelarActionPerformed
-        cancelado();
-        dispose();
+        JOptionPane.showMessageDialog(this, "No se ha establecido la conexión", "Proceso cancelado", JOptionPane.WARNING_MESSAGE);
+        exit(0);
     }//GEN-LAST:event_bCancelarActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        cancelado();
+        JOptionPane.showMessageDialog(this, "No se ha establecido la conexión", "Proceso cancelado", JOptionPane.WARNING_MESSAGE);
+        exit(0);
     }//GEN-LAST:event_formWindowClosing
 
-    private void cancelado(){
-        JOptionPane.showMessageDialog(this, "No se ha establecido la conexión","Proceso cancelado",JOptionPane.WARNING_MESSAGE);
-        VMain.bConexionDialog=false;
-    }
-    
     /**
      * @param args the command line arguments
      */
