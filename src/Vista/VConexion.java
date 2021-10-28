@@ -71,9 +71,9 @@ public class VConexion extends javax.swing.JDialog {
             }
         });
 
-        etUser.setText("AD_TEMA_03_FACTURAS");
+        etUser.setText("EJERCICIO_8");
 
-        etPass.setText("AD_TEMA_03_FACTURAS");
+        etPass.setText("EJERCICIO_8");
 
         bAceptar.setText("Aceptar");
         bAceptar.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));

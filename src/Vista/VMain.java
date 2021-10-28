@@ -6,6 +6,8 @@
 package Vista;
 
 import Controlador.Ctrl_BD;
+import com.sun.media.sound.ModelOscillator;
+import java.awt.event.KeyEvent;
 import static java.lang.System.exit;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -21,12 +23,12 @@ import javax.swing.table.DefaultTableModel;
  * @author PC
  */
 public class VMain extends javax.swing.JFrame {
+
     public static Ctrl_BD controladorBD = new Ctrl_BD();
     DefaultTableModel model;
-    
+
     DatabaseMetaData metaDatos;
-    
-    
+
     /**
      * Creates new form Main
      */
@@ -35,13 +37,14 @@ public class VMain extends javax.swing.JFrame {
         this.setVisible(false);
         VConexion conexion = new VConexion(this, true);
         conexion.setVisible(true);
+        this.setVisible(true);
         model = (DefaultTableModel) tResultado.getModel();
         model.setColumnCount(0);
         model.setRowCount(0);
         try {
             metaDatos = controladorBD.conexion.getMetaData();
         } catch (SQLException ex) {
-            Logger.getLogger(VMain.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error : " + ex.getMessage());
         }
         cargarTablas();
     }
@@ -106,11 +109,21 @@ public class VMain extends javax.swing.JFrame {
         jLabel4.setText("Valor:");
 
         etValor.setEnabled(false);
+        etValor.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                etValorFocusLost(evt);
+            }
+        });
 
         jLabel5.setText("Fecha Inicial:");
 
         etFecha1.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("dd/MM/yy"))));
         etFecha1.setEnabled(false);
+        etFecha1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                etFecha1KeyTyped(evt);
+            }
+        });
 
         jLabel7.setText("BETWEEN");
 
@@ -118,9 +131,25 @@ public class VMain extends javax.swing.JFrame {
 
         etFecha2.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("dd/MM/yy"))));
         etFecha2.setEnabled(false);
+        etFecha2.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                etFecha2KeyTyped(evt);
+            }
+        });
+
+        etSelect.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                etSelectKeyTyped(evt);
+            }
+        });
 
         bEjecutar.setText("Ejecutar");
         bEjecutar.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        bEjecutar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bEjecutarActionPerformed(evt);
+            }
+        });
 
         tResultado.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -218,70 +247,118 @@ public class VMain extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void cbTablasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbTablasActionPerformed
+        cbColumnas.setEnabled(false);
         cbColumnas.removeAllItems();
         cbColumnas.setEnabled(true);
         ArrayList<String> listaColumnas = controladorBD.devolverColumnas(metaDatos, cbTablas.getSelectedItem().toString());
-        for(String item : listaColumnas){
+        for (String item : listaColumnas) {
             cbColumnas.addItem(item);
         }
     }//GEN-LAST:event_cbTablasActionPerformed
 
     private void cbColumnasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbColumnasActionPerformed
-        System.out.println("AQUI");
         cbOperador.removeAllItems();
         etValor.setText("");
         etFecha1.setText("");
         etFecha2.setText("");
-        int i = controladorBD.conocerTipoColumna(metaDatos, cbTablas.getSelectedItem().toString(), cbColumnas.getSelectedItem().toString());
-        switch(i){
-            case 1:
-                cbOperador.setEnabled(true);
-                etValor.setEnabled(true);
-                etFecha1.setEnabled(false);
-                etFecha2.setEnabled(false);
-                cbOperador.addItem("LIKE");
-                cbOperador.addItem("=");
-                cbOperador.addItem("<>");
-            break;
-            case 2:
-                cbOperador.setEnabled(true);
-                etValor.setEnabled(true);
-                etFecha1.setEnabled(false);
-                etFecha2.setEnabled(false);
-                cbOperador.addItem("=");
-                cbOperador.addItem("<");
-                cbOperador.addItem(">");
-                cbOperador.addItem("<=");
-                cbOperador.addItem(">=");
-                cbOperador.addItem("<>");
-            break;
-            case 3:
-                cbOperador.setEnabled(false);
-                etValor.setEnabled(false);
-                etFecha1.setEnabled(true);
-                etFecha2.setEnabled(true);
-            break;
-            case 4:
-                cbOperador.setEnabled(true);
-                etValor.setEnabled(true);
-                etFecha1.setEnabled(false);
-                etFecha2.setEnabled(false);
-                cbOperador.addItem("=");
-            break;
-            case -1:
-                JOptionPane.showMessageDialog(this, "El tipo de la columna no es valido", "Tipo no valido", JOptionPane.INFORMATION_MESSAGE);
-            break;
+        if (cbColumnas.getItemCount() != 0) {
+            int i = controladorBD.conocerTipoColumna(metaDatos, cbTablas.getSelectedItem().toString(), cbColumnas.getSelectedItem().toString());
+            switch (i) {
+                case 1:
+                    cbOperador.setEnabled(true);
+                    etValor.setEnabled(true);
+                    etFecha1.setEnabled(false);
+                    etFecha2.setEnabled(false);
+                    cbOperador.addItem("LIKE");
+                    cbOperador.addItem("=");
+                    cbOperador.addItem("<>");
+                    break;
+                case 2:
+                    cbOperador.setEnabled(true);
+                    etValor.setEnabled(true);
+                    etFecha1.setEnabled(false);
+                    etFecha2.setEnabled(false);
+                    cbOperador.addItem("=");
+                    cbOperador.addItem("<");
+                    cbOperador.addItem(">");
+                    cbOperador.addItem("<=");
+                    cbOperador.addItem(">=");
+                    cbOperador.addItem("<>");
+                    break;
+                case 3:
+                    cbOperador.setEnabled(false);
+                    etValor.setEnabled(false);
+                    etFecha1.setEnabled(true);
+                    etFecha2.setEnabled(true);
+                    break;
+                case 4:
+                    cbOperador.setEnabled(true);
+                    etValor.setEnabled(true);
+                    etFecha1.setEnabled(false);
+                    etFecha2.setEnabled(false);
+                    cbOperador.addItem("=");
+                    break;
+                case -1:
+                    JOptionPane.showMessageDialog(this, "El tipo de la columna no es valido", "Tipo no valido", JOptionPane.INFORMATION_MESSAGE);
+                    break;
+            }
         }
     }//GEN-LAST:event_cbColumnasActionPerformed
 
-    public void cargarTablas(){
+    private void etFecha1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_etFecha1KeyTyped
+        char dig = evt.getKeyChar();
+        if (!Character.isDigit(dig) && evt.getKeyChar() != KeyEvent.VK_SLASH && evt.getKeyChar() != KeyEvent.VK_BACK_SPACE) {
+            evt.consume();
+            getToolkit().beep();
+            JOptionPane.showMessageDialog(this, "El formato de la fecha es: dd/mm/yy", "Error en el formato", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_etFecha1KeyTyped
+    private void etFecha2KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_etFecha2KeyTyped
+        char dig = evt.getKeyChar();
+        if (!Character.isDigit(dig) && evt.getKeyChar() != KeyEvent.VK_SLASH && evt.getKeyChar() != KeyEvent.VK_BACK_SPACE) {
+            evt.consume();
+            getToolkit().beep();
+            JOptionPane.showMessageDialog(this, "El formato de la fecha es: dd/mm/yy", "Error en el formato", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_etFecha2KeyTyped
+    private void etValorFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_etValorFocusLost
+        String select = "";
+        if(!etValor.getText().isEmpty()){
+            if(cbOperador.getSelectedItem().toString()=="LIKE"){
+                select = controladorBD.redactarSelect(cbTablas.getSelectedItem().toString(), cbColumnas.getSelectedItem().toString(), cbOperador.getSelectedItem().toString(), etValor.getText(),true);
+            }else{
+                select = controladorBD.redactarSelect(cbTablas.getSelectedItem().toString(), cbColumnas.getSelectedItem().toString(), cbOperador.getSelectedItem().toString(), etValor.getText(),false);
+            }
+        }
+        etSelect.setText(select);
+    }//GEN-LAST:event_etValorFocusLost
+
+    private void bEjecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bEjecutarActionPerformed
+        ArrayList<String> listaColumnas = controladorBD.nombresColumnas(etSelect.getText());
+        model.setColumnCount(0);
+        for(String Columna : listaColumnas){
+            model.addColumn(Columna);
+        }
+        
+    }//GEN-LAST:event_bEjecutarActionPerformed
+
+    private void etSelectKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_etSelectKeyTyped
+        char dig = evt.getKeyChar();
+        if (evt.getKeyChar() == KeyEvent.VK_SEMICOLON) {
+            evt.consume();
+            getToolkit().beep();
+            JOptionPane.showMessageDialog(this, "No es necesario poner el ; final", "Error", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_etSelectKeyTyped
+
+    public void cargarTablas() {
         cbTablas.removeAllItems();
         ArrayList<String> listaTablas = controladorBD.devolverTablas(metaDatos);
         for (String item : listaTablas) {
             cbTablas.addItem(item);
         }
     }
-    
+
     /**
      * @param args the command line arguments
      */

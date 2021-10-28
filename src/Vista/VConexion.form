@@ -126,12 +126,12 @@
     </Component>
     <Component class="javax.swing.JTextField" name="etUser">
       <Properties>
-        <Property name="text" type="java.lang.String" value="AD_TEMA_03_FACTURAS"/>
+        <Property name="text" type="java.lang.String" value="EJERCICIO_8"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="etPass">
       <Properties>
-        <Property name="text" type="java.lang.String" value="AD_TEMA_03_FACTURAS"/>
+        <Property name="text" type="java.lang.String" value="EJERCICIO_8"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="bAceptar">
