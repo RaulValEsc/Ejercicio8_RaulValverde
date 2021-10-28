@@ -339,6 +339,10 @@ public class VMain extends javax.swing.JFrame {
         for(String Columna : listaColumnas){
             model.addColumn(Columna);
         }
+        ArrayList<String[]> listaRegistros = controladorBD.devolverRegistros(etSelect.getText());
+        for(String[] registro : listaRegistros){
+            model.addRow(registro);
+        }
         
     }//GEN-LAST:event_bEjecutarActionPerformed
 

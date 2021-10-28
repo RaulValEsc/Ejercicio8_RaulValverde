@@ -114,4 +114,31 @@ public class Ctrl_BD {
         }
         return listaColumnas;
     }
+    
+    public ArrayList<String[]> devolverRegistros(String select){
+        ArrayList<String[]> listaRegistros = new ArrayList();
+        String[] registro;
+        ArrayList<String> auxiliar = new ArrayList();
+        int numColumnas = 0;
+        Statement s = null;
+        try {
+            s = conexion.createStatement();
+            ResultSet rs = s.executeQuery(select);
+            ResultSetMetaData rsmd = rs.getMetaData();
+            while(rs.next()){
+                auxiliar.clear();
+                registro = new String[rsmd.getColumnCount()];
+                for (int i = 1; i <= rsmd.getColumnCount(); i++) {
+                    auxiliar.add(rs.getString(rsmd.getColumnName(i)));
+                }
+                auxiliar.toArray(registro);
+                listaRegistros.add(registro);
+            }
+            s.close();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(Ctrl_BD.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return listaRegistros;
+    }
 }
