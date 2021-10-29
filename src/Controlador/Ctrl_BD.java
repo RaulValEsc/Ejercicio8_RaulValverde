@@ -39,7 +39,7 @@ public class Ctrl_BD {
                 listaTablas.add(rs.getString(3));
             }
         } catch (SQLException ex) {
-
+            System.out.println("Error : " + ex.getMessage());
         }
         return listaTablas;
     }
@@ -52,7 +52,7 @@ public class Ctrl_BD {
                 listaColumnas.add(rs.getString(4));
             }
         } catch (SQLException ex) {
-
+            System.out.println("Error : " + ex.getMessage());
         }
         return listaColumnas;
     }
@@ -70,7 +70,7 @@ public class Ctrl_BD {
             rs.next();
             tipo = rs.getString(6);
         } catch (SQLException ex) {
-            Logger.getLogger(Ctrl_BD.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error : " + ex.getMessage());
         }
         switch (tipo) {
             case "VARCHAR2":
@@ -86,10 +86,12 @@ public class Ctrl_BD {
         }
     }
 
-    public String redactarSelect(String tabla, String columna, String operador, String valor, boolean LIKE) {
+    public String redactarSelect(String tabla, String columna, String operador, String valor, boolean LIKE, boolean FECHA, String valor2) {
         String select = "";
         if (LIKE) {
             select = ("SELECT * FROM " + tabla + " WHERE " + columna + " " + operador + " \'%" + valor + "%\'");
+        } else if (FECHA) {
+            select = ("SELECT * FROM " + tabla + " WHERE " + columna + " BETWEEN TO_DATE(\'" + valor + "\' , \'dd/mm/yy\' ) AND TO_DATE(\'" + valor2 + "\' , \'dd/mm/yy\' )");
         } else {
             select = ("SELECT * FROM " + tabla + " WHERE " + columna + " " + operador + " \'" + valor + "\'");
         }
@@ -110,12 +112,12 @@ public class Ctrl_BD {
             s.close();
 
         } catch (SQLException ex) {
-            Logger.getLogger(Ctrl_BD.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error : " + ex.getMessage());
         }
         return listaColumnas;
     }
-    
-    public ArrayList<String[]> devolverRegistros(String select){
+
+    public ArrayList<String[]> devolverRegistros(String select) {
         ArrayList<String[]> listaRegistros = new ArrayList();
         String[] registro;
         ArrayList<String> auxiliar = new ArrayList();
@@ -125,7 +127,7 @@ public class Ctrl_BD {
             s = conexion.createStatement();
             ResultSet rs = s.executeQuery(select);
             ResultSetMetaData rsmd = rs.getMetaData();
-            while(rs.next()){
+            while (rs.next()) {
                 auxiliar.clear();
                 registro = new String[rsmd.getColumnCount()];
                 for (int i = 1; i <= rsmd.getColumnCount(); i++) {
@@ -137,7 +139,7 @@ public class Ctrl_BD {
             s.close();
 
         } catch (SQLException ex) {
-            Logger.getLogger(Ctrl_BD.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error : " + ex.getMessage());
         }
         return listaRegistros;
     }

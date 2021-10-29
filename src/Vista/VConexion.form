@@ -112,27 +112,15 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="etServidor">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="localhost"/>
-      </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="etPuerto">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="1521"/>
-      </Properties>
       <Events>
         <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="etPuertoKeyTyped"/>
       </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="etUser">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="EJERCICIO_8"/>
-      </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="etPass">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="EJERCICIO_8"/>
-      </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="bAceptar">
       <Properties>

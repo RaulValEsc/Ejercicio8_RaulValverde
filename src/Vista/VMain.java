@@ -119,6 +119,11 @@ public class VMain extends javax.swing.JFrame {
 
         etFecha1.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("dd/MM/yy"))));
         etFecha1.setEnabled(false);
+        etFecha1.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                etFecha1FocusLost(evt);
+            }
+        });
         etFecha1.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 etFecha1KeyTyped(evt);
@@ -131,6 +136,11 @@ public class VMain extends javax.swing.JFrame {
 
         etFecha2.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("dd/MM/yy"))));
         etFecha2.setEnabled(false);
+        etFecha2.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                etFecha2FocusLost(evt);
+            }
+        });
         etFecha2.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 etFecha2KeyTyped(evt);
@@ -325,9 +335,9 @@ public class VMain extends javax.swing.JFrame {
         String select = "";
         if(!etValor.getText().isEmpty()){
             if(cbOperador.getSelectedItem().toString()=="LIKE"){
-                select = controladorBD.redactarSelect(cbTablas.getSelectedItem().toString(), cbColumnas.getSelectedItem().toString(), cbOperador.getSelectedItem().toString(), etValor.getText(),true);
-            }else{
-                select = controladorBD.redactarSelect(cbTablas.getSelectedItem().toString(), cbColumnas.getSelectedItem().toString(), cbOperador.getSelectedItem().toString(), etValor.getText(),false);
+                select = controladorBD.redactarSelect(cbTablas.getSelectedItem().toString(), cbColumnas.getSelectedItem().toString(), cbOperador.getSelectedItem().toString(), etValor.getText(),true,false,null);
+            }else{     
+                select = controladorBD.redactarSelect(cbTablas.getSelectedItem().toString(), cbColumnas.getSelectedItem().toString(), cbOperador.getSelectedItem().toString(), etValor.getText(),false,false,null);
             }
         }
         etSelect.setText(select);
@@ -354,6 +364,22 @@ public class VMain extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "No es necesario poner el ; final", "Error", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_etSelectKeyTyped
+
+    private void etFecha1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_etFecha1FocusLost
+        String select = "";
+        if(!etFecha1.getText().equals("")&&!etFecha2.getText().equals("")){
+            select = controladorBD.redactarSelect(cbTablas.getSelectedItem().toString(), cbColumnas.getSelectedItem().toString(), null, etFecha1.getText(),false,true,etFecha2.getText());
+        }
+        etSelect.setText(select);
+    }//GEN-LAST:event_etFecha1FocusLost
+
+    private void etFecha2FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_etFecha2FocusLost
+        String select = "";
+        if(!etFecha1.getText().equals("")&&!etFecha2.getText().equals("")){
+            select = controladorBD.redactarSelect(cbTablas.getSelectedItem().toString(), cbColumnas.getSelectedItem().toString(), null, etFecha1.getText(),false,true,etFecha2.getText());
+        }
+        etSelect.setText(select);
+    }//GEN-LAST:event_etFecha2FocusLost
 
     public void cargarTablas() {
         cbTablas.removeAllItems();

@@ -62,18 +62,11 @@ public class VConexion extends javax.swing.JDialog {
 
         jLabel4.setText("Contraseña:");
 
-        etServidor.setText("localhost");
-
-        etPuerto.setText("1521");
         etPuerto.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 etPuertoKeyTyped(evt);
             }
         });
-
-        etUser.setText("EJERCICIO_8");
-
-        etPass.setText("EJERCICIO_8");
 
         bAceptar.setText("Aceptar");
         bAceptar.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
